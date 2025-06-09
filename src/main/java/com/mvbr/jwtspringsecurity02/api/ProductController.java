@@ -93,22 +93,20 @@ public class ProductController {
         return ResponseEntity.ok("Produto removido");
     }
 
-    @Operation(summary = "Listar meus produtos", description = "Lista todos os produtos do usuário autenticado.")
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/me")
-    public ResponseEntity<List<ProductResponse>> listMyProducts() {
-        User user = getCurrentUser();
-        List<ProductResponse> products = productRepository.findByDonoId(user.getId())
-                .stream().map(this::toResponse).collect(Collectors.toList());
-        return ResponseEntity.ok(products);
-    }
-
-    @Operation(summary = "Listar todos os produtos", description = "Lista todos os produtos (ADMIN).")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Listar produtos", description = "Lista todos os produtos se ADMIN, ou apenas os do usuário se USER.")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> listAllProducts() {
-        List<ProductResponse> products = productRepository.findAll()
-                .stream().map(this::toResponse).collect(Collectors.toList());
+    public ResponseEntity<List<ProductResponse>> listProducts() {
+        User user = getCurrentUser();
+        boolean isAdmin = user.getRoles().stream().anyMatch(r -> r.getName().equals("ADMIN"));
+        List<ProductResponse> products;
+        if (isAdmin) {
+            products = productRepository.findAll()
+                    .stream().map(this::toResponse).collect(Collectors.toList());
+        } else {
+            products = productRepository.findByDonoId(user.getId())
+                    .stream().map(this::toResponse).collect(Collectors.toList());
+        }
         return ResponseEntity.ok(products);
     }
 

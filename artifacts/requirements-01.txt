@@ -43,6 +43,24 @@ iniciais novos casos de uso.
 
 
 
+Para acessar o pgAdmin que está rodando via Docker Compose no seu projeto:
+Abra o navegador e acesse:
+
+http://localhost:5050
+
+E-mail: admin@admin.com
+Senha: admin
+Após o login, adicione um novo servidor:
+Clique em "Add New Server"
+Aba "General": escolha um nome (ex: postgres_jwt)
+Aba "Connection":
+Host name/address: postgres
+Port: 5432
+Username: jwt_user
+Password: jwt_pass
+
+
+----------------------------------------------------------------------------------------------------------------------
 
 
 **********************************************************************

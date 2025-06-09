@@ -32,6 +32,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateRequest request) {
+        // Não precisa validar username manualmente, pois o Bean Validation já faz isso
         if (userRepository.existsByUsername(request.username())) {
             return ResponseEntity.badRequest().body("Usuário já existe");
         }
