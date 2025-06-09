@@ -1,0 +1,9 @@
+# Este é um arquivo de exemplo salvo na pasta artifacts.
+
+Este arquivo pode ser utilizado para armazenar artefatos, exemplos de requests/responses, coleções do Postman, ou qualquer outro material relacionado ao projeto.
+
+Exemplo de uso:
+- Salvar exemplos de requests para o Postman
+- Documentar fluxos de autenticação
+- Armazenar scripts de inicialização
+
