@@ -1,6 +1,8 @@
 package com.mvbr.jwtspringsecurity02.domain;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -17,6 +19,22 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private boolean enabled = false;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Column(unique = true)
+    private String confirmationToken;
+
+    private LocalDateTime confirmationTokenCreatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -39,7 +57,10 @@ public class User {
     public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getConfirmationToken() { return confirmationToken; }
+    public void setConfirmationToken(String confirmationToken) { this.confirmationToken = confirmationToken; }
+    public LocalDateTime getConfirmationTokenCreatedAt() { return confirmationTokenCreatedAt; }
+    public void setConfirmationTokenCreatedAt(LocalDateTime confirmationTokenCreatedAt) { this.confirmationTokenCreatedAt = confirmationTokenCreatedAt; }
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }
 }
-

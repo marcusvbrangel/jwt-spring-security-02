@@ -106,10 +106,10 @@ public class ProductController {
         boolean isAdmin = user.getRoles().stream().anyMatch(r -> r.getName().equals("ADMIN"));
         List<ProductResponse> products;
         if (isAdmin) {
-            products = productRepository.findAll()
+            products = productRepository.findAllWithDono()
                     .stream().map(this::toResponse).collect(Collectors.toList());
         } else {
-            products = productRepository.findByDonoId(user.getId())
+            products = productRepository.findByDonoIdWithDono(user.getId())
                     .stream().map(this::toResponse).collect(Collectors.toList());
         }
         return ResponseEntity.ok(products);
