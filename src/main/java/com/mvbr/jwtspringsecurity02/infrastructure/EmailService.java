@@ -1,16 +1,19 @@
 package com.mvbr.jwtspringsecurity02.infrastructure;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    @Autowired
-    private JavaMailSender mailSender;
 
-    public void sendConfirmationEmail(String to, String confirmationLink) {
+    private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void sendConfirmationEmail(final String to, final String confirmationLink) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);

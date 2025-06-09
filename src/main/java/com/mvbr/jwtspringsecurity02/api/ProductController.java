@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,11 +34,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
+
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private UserRepository userRepository;
+
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+
+    public ProductController(ProductRepository productRepository, UserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+    }
 
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -49,7 +53,7 @@ public class ProductController {
     @Operation(summary = "Criar produto", description = "Cria um novo produto para o usuário autenticado.")
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody final ProductCreateRequest request) {
         User user = getCurrentUser();
         Product product = new Product(request.nome(), request.preco(), user);
         productRepository.save(product);
@@ -60,7 +64,7 @@ public class ProductController {
     @Operation(summary = "Atualizar produto", description = "Atualiza um produto do usuário autenticado.")
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductUpdateRequest request) {
+    public ResponseEntity<?> updateProduct(@PathVariable final UUID id, @Valid @RequestBody final ProductUpdateRequest request) {
         User user = getCurrentUser();
         Optional<Product> optProduct = productRepository.findById(id);
         if (optProduct.isEmpty()) {
@@ -81,7 +85,7 @@ public class ProductController {
     @Operation(summary = "Excluir produto", description = "Exclui um produto do usuário autenticado.")
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable final UUID id) {
         User user = getCurrentUser();
         Optional<Product> optProduct = productRepository.findById(id);
         if (optProduct.isEmpty()) {

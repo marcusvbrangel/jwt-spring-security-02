@@ -9,11 +9,15 @@ import com.mvbr.jwtspringsecurity02.infrastructure.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -24,19 +28,23 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/auth/users")
 public class UserController {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private EmailService emailService;
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+    }
 
     @Operation(summary = "Criar usuário", description = "Cria um novo usuário. Apenas ADMIN pode acessar este endpoint.")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody final UserCreateRequest request) {
         if (userRepository.existsByUsername(request.username())) {
             return ResponseEntity.badRequest().body("Usuário já existe");
         }
@@ -62,7 +70,7 @@ public class UserController {
 
     @Operation(summary = "Confirmar e-mail", description = "Confirma o cadastro do usuário através do token enviado por e-mail.")
     @GetMapping("/confirm")
-    public ResponseEntity<?> confirmEmail(@RequestParam("token") String token) {
+    public ResponseEntity<?> confirmEmail(@RequestParam("token") final String token) {
         Optional<User> userOpt = userRepository.findByConfirmationToken(token);
         if (userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Token inválido.");
