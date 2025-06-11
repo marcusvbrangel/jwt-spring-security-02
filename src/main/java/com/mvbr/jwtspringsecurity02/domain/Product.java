@@ -7,6 +7,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "products")
 public class Product extends AuditableEntity {
+
     @Id
     @GeneratedValue
     private UUID id;
